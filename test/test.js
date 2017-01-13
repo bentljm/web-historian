@@ -60,7 +60,7 @@ describe('server', function() {
         fs.closeSync(fs.openSync(archive.paths.list, 'w'));
 
         request
-          .post('/')
+          .post('/' + url)
           .type('form')
           .send({ url: url })
           .expect(302, function (err) {

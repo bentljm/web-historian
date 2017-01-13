@@ -9,9 +9,12 @@ var fs = require('fs');
 
 exports.handleRequest = function (req, res) {
   var method = req.method;
-  var url = urlParser.parse(req.url).pathname.slice(1);
+  var url = urlParser.parse(req.url).pathname;
+
   if (url === '/') {
-    url = '/index.html';
+    url = 'index.html';
+  } else {
+    url = url.slice(1);
   }
 
   if (method === 'GET') {
@@ -34,21 +37,34 @@ exports.handleRequest = function (req, res) {
         httpHelp.sendResponse(res, data);
       }
     });
-  } else if (method === 'POST') {
-
-    archive.isUrlInList(url, function(result) {
-
-      if (result) {
-
-      } else {
-        //call downloadURLs
-      }
-
-    });
-
   }
 
-
-  //res.end(archive.paths.list);
-  // console.log(res.end(archive.paths.list))
+  if (method === 'POST') {
+    console.log(req.post);
+    console.log(req.url);
+    //1. check list
+    archive.isUrlInList(url, function(result) {
+      // 2. if in list, check archived folder
+      if (result) {
+        //check archive
+        archive.isUrlArchived(url, function(result) {
+          //if archived, redirect to archived page
+          if (result) {
+            //serve files
+            httpHelp.sendRedirect(res, url);
+          } else {
+            //redirect to loading page
+            httpHelp.sendRedirect(res, '/loading.html');
+          }
+        });
+      } else {
+        //call downloadURLs, add it to the list
+        archive.addUrlToList(url, function(result) {
+          //also redirect to loading page
+          //console.log('success')
+          httpHelp.sendRedirect(res, '/loading.html');
+        });
+      }
+    });
+  }
 };
