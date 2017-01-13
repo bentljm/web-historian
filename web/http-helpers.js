@@ -10,12 +10,54 @@ exports.headers = {
   'Content-Type': 'text/html'
 };
 
-// exports.sendResponse = function(res, obj, data) {
-//   status = status || 200;
-//   res.writeHead(status, headers);
-//   res.end(obj);
+exports.serveAssets = function(res, asset, callback) {
 
-// }
+};
+
+exports.sendRedirect = function(res, location, status) {
+  status = status || 302;
+  res.writeHead(status, {Location: location});
+  res.end();
+};
+
+exports.sendResponse = function(res, obj, status) {
+  status = status || 200;
+  res.writeHead(status, exports.headers);
+  res.end(obj);
+};
+
+exports.send404 = function(res) {
+  exports.sendResponse(res, 'Page not found', 404);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // exports.collectData = function(req, callback) {
 //   var data = '';
@@ -26,28 +68,3 @@ exports.headers = {
 //     callback(data);
 //   });
 // }
-
-exports.serveAssets = function(res, asset, callback) {
-  //1. check public folder
-  fs.readFile(archive.paths.siteAssets + asset, 'utf8', function(err, data) {
-    //2. if doesn't exist, check archived folder
-    if (err) {
-      fs.readFile(archive.paths.archivedSites + asset, 'utf8', function(err, data) {
-        //3. if doesn't exist, respond with 404 code
-        if (err) {
-          //return 404 code
-        } else {
-           //serve file
-        }
-      });
-    } else {
-      //serve file
-    }
-  });
-
-
-};
-
-
-
-// As you progress, keep thinking about what helper functions you can put here!

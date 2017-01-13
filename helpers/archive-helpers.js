@@ -72,6 +72,7 @@ exports.isUrlArchived = function(url, callback) {
     } else {
       var found = false;
       files.forEach(function (file) {
+        //console.log(file)
         if (file === url) {
           found = true;
         }
