@@ -10,10 +10,42 @@ exports.headers = {
   'Content-Type': 'text/html'
 };
 
+// exports.sendResponse = function(res, obj, data) {
+//   status = status || 200;
+//   res.writeHead(status, headers);
+//   res.end(obj);
+
+// }
+
+// exports.collectData = function(req, callback) {
+//   var data = '';
+//   req.on('data', function(chunk) {
+//     data += chunk;
+//   });
+//   req.on('end', function(data) {
+//     callback(data);
+//   });
+// }
+
 exports.serveAssets = function(res, asset, callback) {
-  // Write some code here that helps serve up your static files!
-  // (Static files are things like html (yours or archived from others...),
-  // css, or anything that doesn't change often.)
+  //1. check public folder
+  fs.readFile(archive.paths.siteAssets + asset, 'utf8', function(err, data) {
+    //2. if doesn't exist, check archived folder
+    if (err) {
+      fs.readFile(archive.paths.archivedSites + asset, 'utf8', function(err, data) {
+        //3. if doesn't exist, respond with 404 code
+        if (err) {
+          //return 404 code
+        } else {
+           //serve file
+        }
+      });
+    } else {
+      //serve file
+    }
+  });
+
+
 };
 
 

@@ -1,4 +1,5 @@
 var fs = require('fs');
+var http = require('http');
 var path = require('path');
 var _ = require('underscore');
 
@@ -36,31 +37,59 @@ exports.readListOfUrls = function(callback) {
   });
 };
 
-
 exports.isUrlInList = function(url, callback) {
   fs.readFile(exports.paths.list, 'utf8', function (err, content) {
     if (err) {
       callback (err);
     } else {
       content = content.split('\n');
+      var found = false;
       content.forEach(function (item) {
         if (item === url) {
-          callback (item);
+          found = true;
         }
       });
+      callback(found);
     }
   });
 };
 
-
 exports.addUrlToList = function(url, callback) {
-
+  fs.writeFile(exports.paths.list, url + '\n', function (err) {
+    if (err) {
+      callback (err);
+    } else {
+      //console.log("Successfully added URL to List")
+      callback (url);
+    }
+  });
 };
 
 exports.isUrlArchived = function(url, callback) {
-
+  fs.readdir(exports.paths.archivedSites, function (err, files) {
+    if (err) {
+      callback (err);
+    } else {
+      var found = false;
+      files.forEach(function (file) {
+        if (file === url) {
+          found = true;
+        }
+      });
+      callback(found);
+    }
+  });
 };
 
 exports.downloadUrls = function(urls) {
-
+  urls.forEach(function(url) {
+    var fullName = 'http://' + url;
+    var file = fs.createWriteStream(exports.paths.archivedSites + '/' + url);
+    var request = http.get(fullName, function(response) {
+      response.pipe(file);
+      file.on('finish', function() {
+        file.close();
+      });
+    });
+  });
 };
